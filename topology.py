@@ -1,14 +1,16 @@
 #!/usr/bin/python3
 
+#metto anche import os ?
 from mininet.net import Mininet
 from mininet.topo import Topo
-from mininet.node import OVSSwitch, RemoteController
+from mininet.node import OVSSwitch, RemoteController, OVSKernelSwitch
 from mininet.link import TCLink
 from mininet.cli import CLI
+from mininet.node import Controller
 
 class CustomTopology(Topo):
     def __init__(self):
-        # Initialize topology
+        #Initialize
         Topo.__init__(self)
 
         # Create host and switch configurations
