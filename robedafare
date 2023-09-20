@@ -1,0 +1,19 @@
+robe da fare
+
+Creazione della topologia: Prima di tutto, definisci la topologia della rete con tutti gli switch, host e server necessari per le cinque slice. Puoi farlo utilizzando Mininet, come hai fatto in precedenza.
+
+Assegnazione degli indirizzi IP: Usa Mininet per assegnare gli indirizzi IP a ciascun host nella topologia. Puoi farlo direttamente nel file Python utilizzando le API di Mininet.
+
+Connessioni UDP e TCP: Crea le connessioni UDP e TCP tra gli host delle slice pertinenti, come hai menzionato. Imposta le porte corrette e le politiche di comunicazione per ciascuna slice.
+
+Politiche QoS: Implementa le politiche di QoS per ciascuna slice. Questo include l'impostazione delle regole di flusso SDN per garantire la larghezza di banda, la latenza e altre metriche di qualità del servizio specificate.
+
+Gestione delle slice: Crea un meccanismo che consenta all'amministratore di accendere o spegnere le slice secondo necessità. Questo potrebbe essere fatto tramite un'interfaccia utente o un'applicazione di gestione separata.
+
+Condivisione dinamica della banda: Implementa un meccanismo che può monitorare l'utilizzo della banda in ciascuna slice e riassegnare dinamicamente la banda in base alle esigenze. Ad esempio, quando la slice "Security" richiede più banda, riduci la banda di altre slice meno prioritarie.
+
+Priorità del WiFi pubblico: Crea un meccanismo per dare priorità al WiFi pubblico in caso di eventi o situazioni di emergenza. Questo potrebbe richiedere l'aggiornamento delle regole di flusso o la modifica delle politiche di QoS in tempo reale.
+
+Test e ottimizzazione: Testa l'applicazione SDN in vari scenari per assicurarti che soddisfi tutti i requisiti. Ottimizza il codice e le politiche QoS se necessario.
+
+Documentazione: Documenta il tuo codice in modo dettagliato, in modo che sia facile da comprendere e utilizzare per futuri riferimenti o per altre persone che lavorano sul progetto
