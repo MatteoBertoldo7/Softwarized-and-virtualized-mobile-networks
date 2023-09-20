@@ -1,26 +1,25 @@
 Il progetto può soddisfare gli obiettivi di "Network Slice Setup Optimization" consentendo al controllore RYU SDN di suddividere dinamicamente la rete in fette di rete e di riallocare in modo dinamico le risorse di rete e i servizi al fine di mantenere i livelli desiderati di Qualità del Servizio (QoS). Ecco come può affrontare questi obiettivi:
 
 1. Suddivisione Dinamica della Rete:
-
 Il progetto configura diverse fette di rete con requisiti specifici di QoS, come bassa latenza, alta affidabilità o alta larghezza di banda, utilizzando il controllore RYU SDN.
+
 2. Allocazione delle Risorse:
-
 Definisce e configura le politiche di QoS per ciascuna fetta di rete, specificando le caratteristiche richieste. Ad esempio, "Smart Traffic" potrebbe richiedere una bassa latenza, mentre "IoT Monitoring" necessita di una larghezza di banda elevata.
-3. Migrazione dei Server per l'ottimizzazione:
 
+3. Migrazione dei Server per l'ottimizzazione:
 Il progetto include scenari in cui il controllore RYU SDN può allocare dinamicamente le risorse di rete per ottimizzare la QoS.
 Esempio 1: Se una fetta di rete, come "IoT Monitoring," registra un aumento del traffico e richiede più larghezza di banda, il controllore può migrare server per massimizzare il throughput, ridistribuendo risorse da altre fette di rete.
 Esempio 2: Per minimizzare la latenza in una fetta di rete "Smart Traffic," il controllore può regolare l'allocazione delle risorse per ridurre la latenza.
-4. Adattamento all'Ambiente:
 
+4. Adattamento all'Ambiente:
 Il progetto considera i cambiamenti ambientali e li incorpora nei suoi scenari. Ad esempio, può simulare guasti dei collegamenti o l'introduzione di nuovo traffico.
 Dopo 30 secondi, se un collegamento si interrompe, il controllore RYU SDN può adattarsi cambiando il percorso del traffico per mantenere la QoS desiderata nelle fette di rete interessate.
-5. Script Northbound:
 
+5. Script Northbound:
 Per ottenere la migrazione dei server e l'allocazione dinamica delle risorse, vengono implementati script northbound all'interno del controllore RYU SDN.
 Questi script monitorano le condizioni di rete, i modelli di traffico e le metriche di QoS per attivare la ridistribuzione delle risorse in base agli obiettivi di ottimizzazione predefiniti.
-6. Valutazione e Test:
 
+6. Valutazione e Test:
 Il progetto valuta l'efficacia di questi scenari di ottimizzazione misurando le metriche di QoS come latenza, throughput, affidabilità e utilizzo della larghezza di banda.
 Valuta quanto bene il controllore RYU SDN riesca ad adattarsi ai cambiamenti delle condizioni di rete e a mantenere i livelli desiderati di QoS in ciascuna fetta di rete.
 In sintesi, il progetto soddisfa gli obiettivi di "Network Slice Setup Optimization" creando e gestendo fette di rete con requisiti specifici di QoS e riallocando dinamicamente le risorse per ottimizzare la QoS. Considera i cambiamenti ambientali, utilizza lo scripting northbound per l'automazione e valuta le prestazioni di questi scenari di ottimizzazione per garantire che i livelli desiderati di QoS siano mantenuti in tutte le fette di rete.
