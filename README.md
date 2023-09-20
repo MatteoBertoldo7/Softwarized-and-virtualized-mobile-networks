@@ -1,40 +1,48 @@
-# Softwarized-and-virtualized-mobile-networks
+LA MIA IDEA E' SIMULARE UN DYNAMIC NETWORK SLICING (DNS) PER UNA CITTA' SMART
 
-Project Description:
-This project aims to develop a dynamic network slicing solution within a Software-Defined Networking (SDN) environment. Network slicing is a key concept in modern networking, allowing the creation of isolated virtual networks with specific characteristics and Quality of Service (QoS) requirements. The primary goals of this project are as follows:
+UNA RETE IN CUI CI SONO VARIE SLICE: WIFI PUBBLICO, SICUREZZA, TRAFFICO SMART, IOT E UNA SLICE CHE INTERCONNETTE QUESTE 4
+OGNI SLICE HA UNO SWITCH E DUE HOST
 
-1. Network Slicing Setup:
+SLICE --> perchè ogni rete separata ha diverse politiche di QoS (banda, priorità, connessioni usate ...)
+HOST --> hanno tutti una funzione (elaborano traffico, termostati, stazioni meteo ...)
 
-Implement a network slicing approach that enables the dynamic creation, activation, and deactivation of network slices.
-Use a single SDN controller, such as RYU, to manage the network.
-Define and describe network slice templates that allow the identification of flows, network topology, and percentage of link capacity for each slice.
-2. QoS Management:
+SLICE interconnesse perchè possono condividere la banda in caso di emergenza
+possono essere spente/accese in caso di eventi
 
-Define and configure specific QoS policies for each network slice. For example, "Smart Traffic" may require low latency, "Public Safety" may require high reliability, and "IoT Monitoring" may require high bandwidth.
-Implement policies that dynamically allocate network resources to maintain the desired QoS for each slice.
-3. Slice-Optimization Scenarios:
 
-Develop scenarios where network resources can be dynamically reallocated to optimize network performance. For instance, migrating a server to maximize throughput or minimize delay via northbound scripts.
-Consider environmental changes, such as link failures or the introduction of new traffic, and adapt the network accordingly.
-4. Tools and Technologies:
+Obiettivi del Progetto:
+L'obiettivo principale del progetto è creare una rete dinamica di slicing (DNS) per una città smart.
+La rete deve essere in grado di fornire connettività e servizi diversificati a diverse parti della città, ciascuna con esigenze di QoS specifiche.
 
-Utilize ComNetsEmu, an SDN/NFV network emulator that extends Mininet's capabilities, for network emulation.
-Key tools and technologies include Mininet for creating virtual network entities, RYU as the SDN controller, and Wireshark for packet analysis during emulation.
-5. Infrastructure Design:
+Casi d'Uso:
+Scenari d'uso includono situazioni di emergenza, eventi speciali come fiere o manifestazioni, gestione del traffico durante le ore di punta, monitoraggio IoT in tempo reale e sicurezza della rete.
 
-Design a reference network infrastructure that includes switches, base stations, and data centers.
-Configure the network infrastructure parameters, such as the number of slices, datacenter locations, and user-to-base station mappings, via a configuration file.
-6. Project Workflow:
+Architettura di Rete:
+L'architettura di rete prevede cinque slice separate, ciascuna con un proprio switch, proprio server e due host.
+Una slice di comunicazione interconnette le altre quattro slice per consentire la condivisione della banda in caso di necessità.
 
-Deploy the network using RYU controller with specified configurations.
-Interact with the deployed network through a Mininet client to monitor and control network slices.
-Implement custom flow rules or limitations using Ryu's SDN controller capabilities.
-7. Slicing Scenarios:
+Politiche di QoS:
+WiFi pubblico: Banda larga e priorità media.
+Sicurezza: Banda media e priorità alta.
+Traffico smart: Banda elevata e priorità media.
+IoT: Banda bassa e priorità bassa.
+Gestione delle Risorse:
 
-Develop and demonstrate different network slicing scenarios, each with unique QoS requirements and optimization goals.
-Evaluate the performance and effectiveness of the dynamic network slicing and QoS management.
-8. Documentation and Reporting:
+In situazioni di emergenza, la slice di sicurezza ha la massima priorità e può richiedere più banda alle altre slice.
+La banda viene condivisa in modo dinamico e in base alle esigenze, garantendo comunque un minimo livello di servizio per ciascuna slice.
 
-Document the project thoroughly, including network configurations, slice templates, and QoS policies.
-Prepare reports and findings based on the project's evaluation and testing results.
-By implementing dynamic network slicing and efficient QoS management, this project aims to showcase the advantages of SDN in optimizing network resources and providing tailored services for various applications and traffic types.
+Amministrazione e Controllo:
+L'amministratore di rete ha il potere di accendere/spegnere le slice in base alle esigenze.
+Le priorità vengono gestite automaticamente in base alle politiche di QoS e alle condizioni della rete.
+
+Simulazioni e Test:
+Sono stati condotti test di simulazione per verificare la risposta della rete in situazioni di emergenza e sovraccarico.
+I risultati dimostrano che la rete è in grado di adeguare la banda in modo efficiente e garantire il funzionamento delle slice prioritarie.
+
+Benefici e Applicazioni:
+La rete dinamica di slicing migliora la gestione del traffico, la sicurezza e l'efficienza nell'erogazione di servizi in una città smart.
+Applicazioni includono il monitoraggio del traffico in tempo reale, la gestione degli eventi speciali e la risposta alle emergenze.
+
+
+Conclusioni:
+Il progetto ha creato con successo una rete dinamica di slicing per una città smart, migliorando la qualità dei servizi offerti e la gestione delle risorse di rete.
