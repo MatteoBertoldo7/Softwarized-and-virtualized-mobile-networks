@@ -10,6 +10,15 @@ from ryu.lib.packet import ether_types
 
 class SliceConnection(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION]
+
+    servers=["00:00:00:00:00:09","00:00:00:00:00:0a", "00:00:00:00:00:0b", "00:00:00:00:00:0c", "00:00:00:00:00:0d"]
+
+    
+    host=["00:00:00:00:00:01","00:00:00:00:00:02","00:00:00:00:00:03","00:00:00:00:00:04","00:00:00:00:00:05","00:00:00:00:00:06","00:00:00:00:00:07","00:00:00:00:00:08"]
+    hostpublicwifi=["00:00:00:00:00:01","00:00:00:00:00:02"]
+    hostiot=["00:00:00:00:00:03","00:00:00:00:00:04"]
+    hosttraffic=["00:00:00:00:00:05", "00:00:00:00:00:06"]
+    hostsecurity=["00:00:00:00:00:09", "00:00:00:00:00:08"]
     
     def __init__(self, *args, **kwargs):
         super(SliceConnection, self).__init__(*args, **kwargs)
