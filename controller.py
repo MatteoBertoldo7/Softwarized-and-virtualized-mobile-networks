@@ -15,21 +15,6 @@ class SDNController(app_manager.RyuApp):
         self.byte_ricevuti = {}   # Dizionario per tenere traccia dei byte ricevuti per ciascuno switch
         self.soglia_di_allarme = 1000000  # Soglia di allarme in byte (ad esempio, 1 MB)
         
-    @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
-    def switch_features_handler(self, ev):
-        datapath = ev.msg.datapath
-        ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
-
-        # Definisci le regole di flusso per ciascuna slice
-        # Ad esempio, regole per la slice WiFi pubblico
-        if datapath.id == 1:  # Supponiamo che lo switch per WiFi pubblico abbia datapath ID 1
-            match = parser.OFPMatch(eth_type=0x0800, ip_proto=6, tcp_dst=80)
-            actions = [parser.OFPActionOutput(ofproto.OFPP_NORMAL)]
-            self.add_flow(datapath, 100, match, actions)
-
-
-
     #PROVO A METTERE CHE SE IL WIFI PUBBLICO SUPERA 90%, ALTRE AREE CONDIVIDONO
     #LA PROPRIA RETE (TRANNE SECURITY)
 
@@ -53,7 +38,7 @@ class SDNController(app_manager.RyuApp):
                 logging.warning("L'utilizzo della banda per lo switch %s ha superato la soglia di allarme.", dp_id)
                 self.condividi_banda(dp_id)
 
-        def condividi_banda(self, switch_id):
+    def condividi_banda(self, switch_id):
         # Implementa la logica per la condivisione dinamica della banda
         # Puoi attivare la condivisione della banda tra le diverse aree di rete qui
         # Ad esempio, regola le politiche di instradamento in base alle esigenze
@@ -76,39 +61,20 @@ class SDNController(app_manager.RyuApp):
             # Ad esempio, tieni traccia dei byte totali trasmessi e ricevuti
             # Controlla l'utilizzo della banda per uno switch specifico
             dp_ip = msg.datapath.id
-            byte_trasmessi = self.byte_trasmessi.get(dp_id, 0)
-            byte_ricevuti = self.byte_ricevuti.get(dp_id, 0)
+            byte_trasmessi = self.byte_trasmessi.get(dp_ip, 0)
+            byte_ricevuti = self.byte_ricevuti.get(dp_ip, 0)
             
             # Calcola l'utilizzo della banda in base al numero di byte trasmessi e ricevuti
             utilizzo_banda = (byte_trasmessi + byte_ricevuti) / (tempo_trascorso_in_secondi)  # Calcola l'utilizzo in byte al secondo
                         
-            if utilizzo_banda > soglia_di_allarme:
+            if utilizzo_banda > self.soglia_di_allarme:
                 logging.warning("L'utilizzo della banda ha superato la soglia di allarme.")
                 
                 # Puoi intraprendere azioni specifiche qui in caso di superamento della soglia
                 # Ad esempio, invia una notifica, registra l'evento, ecc.
-                # Inoltre, è possibile definire ulteriori azioni da intraprendere in questa condizione.
+                # Inoltre, è possibile definire ulteriori azioni da intraprendere in questa condizione
     
     # ...
-
-
-
-    
-
-    def add_flow(self, datapath, priority, match, actions):
-        ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
-
-        inst = [parser.OFPInstructionActions(ofproto.OFPIT_APPLY_ACTIONS, actions)]
-        mod = parser.OFPFlowMod(
-            datapath=datapath, priority=priority, match=match,
-            instructions=inst, idle_timeout=0, hard_timeout=0,
-            buffer_id=ofproto.OFP_NO_BUFFER, out_port=ofproto.OFPP_ANY,
-            out_group=ofproto.OFPG_ANY, flags=0
-        )
-        datapath.send_msg(mod)
-
-    # Aggiungi altre funzioni e logica per la gestione delle slice, la condivisione di banda, ecc.
 
 if __name__ == '__main__':
     from ryu.cmd import manager
