@@ -3,14 +3,16 @@ from ryu.controller import ofp_event
 from ryu.controller.handler import MAIN_DISPATCHER, CONFIG_DISPATCHER
 from ryu.controller.handler import set_ev_cls
 from ryu.ofproto import ofproto_v1_3
-from ryu.lib.packet import packet
-from ryu.lib.packet import ethernet
+from ryu.lib.packet import packet, ethernet
+import logging
 
 class SDNController(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
 
     def __init__(self, *args, **kwargs):
         super(SDNController, self).__init__(*args, **kwargs)
+        self.byte_trasmessi = {}  # Dizionario per tenere traccia dei byte trasmessi per ciascuno switch
+        self.byte_ricevuti = {}   # Dizionario per tenere traccia dei byte ricevuti per ciascuno switch
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -24,6 +26,65 @@ class SDNController(app_manager.RyuApp):
             match = parser.OFPMatch(eth_type=0x0800, ip_proto=6, tcp_dst=80)
             actions = [parser.OFPActionOutput(ofproto.OFPP_NORMAL)]
             self.add_flow(datapath, 100, match, actions)
+
+
+
+    #PROVO A METTERE CHE SE IL WIFI PUBBLICO SUPERA 90%, ALTRE AREE CONDIVIDONO
+    #LA PROPRIA RETE (TRANNE SECURITY)
+
+    @set_ev_cls(ofp_event.EventOFPFlowStatsReply, MAIN_DISPATCHER)
+    def flow_stats_reply_handler(self, ev):
+        # Gestisci le statistiche di flusso ricevute da uno switch
+        msg = ev.msg
+        dp_id = msg.datapath.id
+
+        for stat in msg.body:
+            byte_trasmessi = stat.byte_count  # Byte trasmessi nel flusso
+            byte_ricevuti = stat.packet_count * 1024  # Byte ricevuti nel flusso (moltiplicati per 1024 per convertirli in byte)
+
+            # Aggiorna le variabili di utilizzo della banda per lo switch
+            self.byte_trasmessi[dp_id] = byte_trasmessi
+            self.byte_ricevuti[dp_id] = byte_ricevuti
+            
+
+    @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
+    def packet_in_handler(self, ev):
+        msg = ev.msg
+        pkt = packet.Packet(msg.data)
+    
+        # Analizza il pacchetto Ethernet (SWITCH SDN LAVORANO A LIVELLO ETHERNET)
+        eth_pkt = pkt.get_protocol(ethernet.ethernet)
+    
+        if eth_pkt:
+            # Estrai gli indirizzi MAC di origine e destinazione dal pacchetto Ethernet
+            src_mac = eth_pkt.src
+            dst_mac = eth_pkt.dst
+            
+            # Puoi calcolare l'utilizzo della banda in base ai pacchetti ricevuti/trasferiti
+            # Ad esempio, tieni traccia dei byte totali trasmessi e ricevuti
+            def controllo_soglia(self, dp_id, soglia_di_allarme):
+            # Controlla l'utilizzo della banda per uno switch specifico
+            byte_trasmessi = self.byte_trasmessi.get(dp_id, 0)
+            byte_ricevuti = self.byte_ricevuti.get(dp_id, 0)
+            
+            # Calcola l'utilizzo della banda in base al numero di byte trasmessi e ricevuti
+            utilizzo_banda = (byte_trasmessi + byte_ricevuti) / (tempo_trascorso_in_secondi)  # Calcola l'utilizzo in byte al secondo
+            
+            # Confronta l'utilizzo della banda con la soglia di allarme
+            soglia_di_allarme = 1000000  # Soglia di allarme in byte (ad esempio, 1 MB)
+            
+            if utilizzo_banda > soglia_di_allarme:
+                logging.warning("L'utilizzo della banda ha superato la soglia di allarme.")
+                
+                # Puoi intraprendere azioni specifiche qui in caso di superamento della soglia
+                # Ad esempio, invia una notifica, registra l'evento, ecc.
+                # Inoltre, è possibile definire ulteriori azioni da intraprendere in questa condizione.
+    
+    # ...
+
+
+
+    
 
     def add_flow(self, datapath, priority, match, actions):
         ofproto = datapath.ofproto
