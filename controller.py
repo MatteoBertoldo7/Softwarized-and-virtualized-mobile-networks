@@ -69,7 +69,7 @@ class SDNController(app_manager.RyuApp):
             byte_ricevuti = self.byte_ricevuti.get(dp_ip, 0)
             
             # Calcola l'utilizzo della banda in base al numero di byte trasmessi e ricevuti
-            utilizzo_banda = (byte_trasmessi + byte_ricevuti) / (tempo_trascorso_in_secondi)  # Calcola l'utilizzo in byte al secondo
+            utilizzo_banda = (byte_trasmessi + byte_ricevuti) / (elapsed_time)  # Calcola l'utilizzo in byte al secondo
                         
             if utilizzo_banda > self.soglia_di_allarme:
                 logging.warning("L'utilizzo della banda ha superato la soglia di allarme.")
