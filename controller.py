@@ -15,6 +15,8 @@ class SDNController(app_manager.RyuApp):
         self.byte_trasmessi = {}  # Dizionario per tenere traccia dei byte trasmessi per ciascuno switch
         self.byte_ricevuti = {}   # Dizionario per tenere traccia dei byte ricevuti per ciascuno switch
         self.soglia_di_allarme = 1000000  # Soglia di allarme in byte (ad esempio, 1 MB)
+        self.last_measurement_time = time.time()  # Inizializza il tempo dell'ultima misurazione
+
         
     #PROVO A METTERE CHE SE IL WIFI PUBBLICO SUPERA 90%, ALTRE AREE CONDIVIDONO
     #LA PROPRIA RETE (TRANNE SECURITY)
@@ -40,11 +42,10 @@ class SDNController(app_manager.RyuApp):
             utilizzo_banda = (byte_trasmessi + byte_ricevuti) / elapsed_time
             if utilizzo_banda > self.soglia_di_allarme:
                 logging.warning("L'utilizzo della banda per lo switch %s ha superato la soglia di allarme.", dp_id)
-                self.condividi_banda(dp_id)
+                self.condividi_banda(dp_id, utilizzo_banda)
 
-    def condividi_banda(self, switch_id):
-# Implementa la logica per la condivisione dinamica della banda
-    
+    def condividi_banda(self, switch_id, utilizzo_wifi_pubblico):
+    # Implementa la logica per la condivisione dinamica della banda    
     # Esempio: se il WiFi pubblico supera il 90% dell'utilizzo della banda
     # e il switch specifico supera la soglia di allarme, ridistribuisci la banda
     
@@ -52,7 +53,7 @@ class SDNController(app_manager.RyuApp):
         wifi_pubblico_utilizzo = self.byte_trasmessi.get(switch_id, 0) + self.byte_ricevuti.get(switch_id, 0)
         if wifi_pubblico_utilizzo > 0.9 * self.soglia_di_allarme:
             # Ridistribuisci la banda tra altre aree di rete, ad eccezione della sicurezza (non la tocchiamo)
-            self.redistribuisci_banda(wifi_pubblico_utilizzo)    
+            self.redistribuisci_banda(utilizzo_wifi_pubblico)    
     # Altre logiche di condivisione della banda in base ai tuoi requisiti
 
     
@@ -68,8 +69,11 @@ class SDNController(app_manager.RyuApp):
     if 'iot' in self.byte_trasmessi:
         self.byte_trasmessi['iot'] = 50 * 1024 * 1024  # 50 MB in byte
         self.byte_ricevuti['iot'] = 50 * 1024 * 1024  # 50 MB in byte
-    num_aree_di_rete = 4
-    banda_per_area = utilizzo_wifi_pubblico / num_aree_di_rete
+
+    num_aree_di_rete = len(self.byte_trasmessi)
+    if num_aree_di_rete > 2:  # Assicuriamoci che ci siano almeno 3 aree di rete per ridistribuire la banda
+        banda_restante = utilizzo_wifi_pubblico - (100 * 1024 * 1024 + 50 * 1024 * 1024)  # Banda rimanente dopo l'assegnazione manuale
+        banda_per_area = banda_restante / (num_aree_di_rete - 2)  # Sottrai 2 per le aree "traffic" e "iot"
     
     for switch_id in self.byte_trasmessi:
         if switch_id != 'switch_wifi_pubblico' and switch_id != 'switch_sicurezza':
