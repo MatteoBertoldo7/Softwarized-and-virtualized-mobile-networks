@@ -11,8 +11,10 @@ import socket
 
 class CustomTopology(Topo):
     def __init__(self):
+        #inizializzo
         Topo.__init__(self)
 
+        #potevo usare il for
         # Aggiungi gli switch per le cinque slice
         wifi_switch = self.addSwitch('s1')
         iot_switch = self.addSwitch('s2')
@@ -20,7 +22,7 @@ class CustomTopology(Topo):
         safety_switch = self.addSwitch('s4')
         communication_switch = self.addSwitch('s5')
 
-
+        #potevo usare il for
         # Aggiungi gli host per le cinque slice (quinta non ha host)
         wifi_host1 = self.addHost('h11')
         wifi_host2 = self.addHost('h12')
@@ -47,7 +49,7 @@ class CustomTopology(Topo):
         self.addLink(safety_host1, safety_switch)
         self.addLink(safety_host2, safety_switch)
 
-        #creo i 5 server
+        #creo i 5 server #potevo usare un for #potrebbe bastare un server solo per silce collegamento
         wifi_server = self.addHost('server1')
         iot_server = self.addHost('server2')
         traffic_server = self.addHost('server3')
@@ -93,6 +95,7 @@ class CustomTopology(Topo):
         safety_server.setIP(str(safety_subnet[253]))
         communication_server.setIP(str(communication_subnet[253]))
 
+        #sta roba va qua?
         # Porte di comunicazione per ciascuna slice
         security_port = 5000  # Porta UDP per slice Security
         iot_port = 6000       # Porta UDP per slice IoT
@@ -117,6 +120,8 @@ class CustomTopology(Topo):
         traffic_server.bind(("0.0.0.0", traffic_port))
         traffic_server.listen(5)  # Imposta il numero massimo di connessioni in attesa
 
+        topos = {"networkslicingtopo": (lambda: NetworkSlicingTopo())}
+
 
 if __name__ == '__main__':
     topo = CustomTopology()
@@ -138,7 +143,7 @@ if __name__ == '__main__':
 
     # Configura le regole di flusso o le limitazioni specifiche dei link
     # Puoi utilizzare il comando "net['switch'].cmd()" per aggiungere regole personalizzate
-
+    #limitazioni di banda?
     # Esempio di impostazione di una limitazione di banda su una porta specifica del link tra s11 e s12
     net['s11'].cmd('tc qdisc add dev s11-eth1 root tbf rate 1Mbit burst 10kbit latency 10ms')
 
