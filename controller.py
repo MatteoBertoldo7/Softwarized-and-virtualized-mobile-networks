@@ -13,7 +13,8 @@ class SDNController(app_manager.RyuApp):
         super(SDNController, self).__init__(*args, **kwargs)
         self.byte_trasmessi = {}  # Dizionario per tenere traccia dei byte trasmessi per ciascuno switch
         self.byte_ricevuti = {}   # Dizionario per tenere traccia dei byte ricevuti per ciascuno switch
-
+        self.soglia_di_allarme = 1000000  # Soglia di allarme in byte (ad esempio, 1 MB)
+        
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
         datapath = ev.msg.datapath
@@ -45,7 +46,18 @@ class SDNController(app_manager.RyuApp):
             # Aggiorna le variabili di utilizzo della banda per lo switch
             self.byte_trasmessi[dp_id] = byte_trasmessi
             self.byte_ricevuti[dp_id] = byte_ricevuti
-            
+
+            # Controlla se l'utilizzo della banda supera la soglia di allarme
+            utilizzo_banda = byte_trasmessi + byte_ricevuti
+            if utilizzo_banda > self.soglia_di_allarme:
+                logging.warning("L'utilizzo della banda per lo switch %s ha superato la soglia di allarme.", dp_id)
+                self.condividi_banda(dp_id)
+
+        def condividi_banda(self, switch_id):
+        # Implementa la logica per la condivisione dinamica della banda
+        # Puoi attivare la condivisione della banda tra le diverse aree di rete qui
+        # Ad esempio, regola le politiche di instradamento in base alle esigenze
+        pass
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def packet_in_handler(self, ev):
@@ -62,17 +74,14 @@ class SDNController(app_manager.RyuApp):
             
             # Puoi calcolare l'utilizzo della banda in base ai pacchetti ricevuti/trasferiti
             # Ad esempio, tieni traccia dei byte totali trasmessi e ricevuti
-            def controllo_soglia(self, dp_id, soglia_di_allarme):
             # Controlla l'utilizzo della banda per uno switch specifico
+            dp_ip = msg.datapath.id
             byte_trasmessi = self.byte_trasmessi.get(dp_id, 0)
             byte_ricevuti = self.byte_ricevuti.get(dp_id, 0)
             
             # Calcola l'utilizzo della banda in base al numero di byte trasmessi e ricevuti
             utilizzo_banda = (byte_trasmessi + byte_ricevuti) / (tempo_trascorso_in_secondi)  # Calcola l'utilizzo in byte al secondo
-            
-            # Confronta l'utilizzo della banda con la soglia di allarme
-            soglia_di_allarme = 1000000  # Soglia di allarme in byte (ad esempio, 1 MB)
-            
+                        
             if utilizzo_banda > soglia_di_allarme:
                 logging.warning("L'utilizzo della banda ha superato la soglia di allarme.")
                 
