@@ -51,15 +51,23 @@ class SDNController(app_manager.RyuApp):
     if switch_id == 'switch_wifi_pubblico':
         wifi_pubblico_utilizzo = self.byte_trasmessi.get(switch_id, 0) + self.byte_ricevuti.get(switch_id, 0)
         if wifi_pubblico_utilizzo > 0.9 * self.soglia_di_allarme:
-            # Ridistribuisci la banda tra altre aree di rete, ad eccezione della sicurezza
-            self.redistribuisci_banda(wifi_pubblico_utilizzo)
-    
+            # Ridistribuisci la banda tra altre aree di rete, ad eccezione della sicurezza (non la tocchiamo)
+            self.redistribuisci_banda(wifi_pubblico_utilizzo)    
     # Altre logiche di condivisione della banda in base ai tuoi requisiti
 
+    
     def redistribuisci_banda(self, utilizzo_wifi_pubblico):
-    # Esempio di ridistribuzione della banda tra le altre aree di rete
-    # In questa implementazione fittizia, si assume che ci siano 4 aree di rete
-    # e la banda venga suddivisa equamente tra di loro
+
+    #Assegna manualmente 100 MB di banda all'area "traffic" e 50 MB all'area "iot"
+    # Verifica se l'area "traffic" è presente nel dizionario byte_trasmessi
+    if 'traffic' in self.byte_trasmessi:
+        self.byte_trasmessi['traffic'] = 100 * 1024 * 1024  # 100 MB in byte
+        self.byte_ricevuti['traffic'] = 100 * 1024 * 1024  # 100 MB in byte
+
+    # Verifica se l'area "iot" è presente nel dizionario byte_trasmessi
+    if 'iot' in self.byte_trasmessi:
+        self.byte_trasmessi['iot'] = 50 * 1024 * 1024  # 50 MB in byte
+        self.byte_ricevuti['iot'] = 50 * 1024 * 1024  # 50 MB in byte
     num_aree_di_rete = 4
     banda_per_area = utilizzo_wifi_pubblico / num_aree_di_rete
     
