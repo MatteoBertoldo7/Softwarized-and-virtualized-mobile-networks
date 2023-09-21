@@ -21,6 +21,9 @@ class SDNController(app_manager.RyuApp):
     @set_ev_cls(ofp_event.EventOFPFlowStatsReply, MAIN_DISPATCHER)
     def flow_stats_reply_handler(self, ev):
         # Gestisci le statistiche di flusso ricevute da uno switch
+        current_time = time.time()  # Ottieni il tempo corrente
+        elapsed_time = current_time - self.last_measurement_time  # Calcola l'intervallo di tempo trascorso
+        self.last_measurement_time = current_time  # Aggiorna il tempo dell'ultima misurazione
         msg = ev.msg
         dp_id = msg.datapath.id
 
@@ -33,7 +36,7 @@ class SDNController(app_manager.RyuApp):
             self.byte_ricevuti[dp_id] = byte_ricevuti
 
             # Controlla se l'utilizzo della banda supera la soglia di allarme
-            utilizzo_banda = byte_trasmessi + byte_ricevuti
+            utilizzo_banda = (byte_trasmessi + byte_ricevuti) / elapsed_time
             if utilizzo_banda > self.soglia_di_allarme:
                 logging.warning("L'utilizzo della banda per lo switch %s ha superato la soglia di allarme.", dp_id)
                 self.condividi_banda(dp_id)
